@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mybatis.resultmap.example.UserOperation">
+
+	<select id="getUser" parameterType="int" resultMap="UserMap">
+		select u.id
+		as userId,userName,courseName,corp,c.id as courseId from user u left
+		join
+		userCourse uc on u.id
+		=uc.user_id left join course c on c.id =
+		uc.course_id where u.id
+		= #{id}
+	</select>
+
+	<resultMap id="UserMap"
+		type="org.mybatis.resultmap.example.User">
+		<constructor>
+			<idArg column="userId" javaType="int" />
+			<arg column="userName" javaType="String" />
+			<arg column="corp" javaType="String" />
+		</constructor>
+		<!-- 添加collection标签，property属性为courses，这里的ofType表示之前定义的Course类 -->
+		<!-- 注意：property属性的值必须要与 Java对象Course类 中的属性一致，这样MyBatis才能自动完成映射-->
+		<collection property="courses"
+			ofType="org.mybatis.resultmap.example.Course">
+			<id property="id" column="courseId" />
+			<result property="courseName" column="courseName" />
+		</collection>
+	</resultMap>
+</mapper>
